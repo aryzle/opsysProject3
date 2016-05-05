@@ -37,8 +37,8 @@ int main (int argc, char* argv[]) {
     procs_ncont[i].print();
   }*/
   
-  run(procs_cont, num_procs, "CONTIGUOUS");
-  run(procs_ncont, num_procs, "NON-CONTIGUOUS");
+  run(procs_cont, num_procs, "Contiguous");
+  run(procs_ncont, num_procs, "Non-contiguous");
   return 0;
 }
 
@@ -47,12 +47,22 @@ int main (int argc, char* argv[]) {
 //
 void run (deque<Proc> &procs, int n, string scheme) {
   Memory m = Memory(); 
-  m.print();
+  Proc p;
+  int time = 0;
+  const int t_memmove = 1;
+  //m.print();
   
-  if (scheme == "CONTIGUOUS"){
-    //do contiguous 
+  if (scheme == "Contiguous"){
+    cout << "time " << time << "ms: Simulator started (" << scheme << " -- "
+         << "First-Fit)" << endl;
+    while (!procs.empty()) {
+      p = procs.front();
+      procs.pop_front();
+      m.add(p);
+      m.print();
+    }
   }
-  else if(scheme ==  "NON-CONTIGUOUS"){
+  else if(scheme ==  "Non-contiguous"){
     //do non contiguous 
   }
   return;
@@ -77,5 +87,4 @@ void create_proc (string line, deque<Proc> &p) {
     times[2] = tokens[i+1];
     push_deque(p, Proc(name, times));
   }
-  
 }
