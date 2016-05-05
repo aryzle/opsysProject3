@@ -1,4 +1,6 @@
+#include <iostream>
 #include <vector>
+#include "Proc.h"
 using namespace std;
 
 //Proc default constructor
@@ -11,8 +13,8 @@ Proc::Proc() {
 
 //Proc constructor: takes a char for name then a vector with 3 ints
 //                  for it's member variables
-Proc::Proc (char name, vector<int> values) {
-  name = name;
+Proc::Proc (char c, vector<int> values) {
+  name = c;
   memory = values[0];
   arrival_t = values[1];
   exit_t = values[2];
