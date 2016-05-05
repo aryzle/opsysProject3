@@ -8,4 +8,5 @@ class Memory {
     char frames[256];
 
     void print() const;
+    void defrag();
 };

@@ -36,6 +36,7 @@ int main (int argc, char* argv[]) {
     procs_cont[i].print();
     procs_ncont[i].print();
   }*/
+  
   run(procs_cont, num_procs, "CONTIGUOUS");
   run(procs_ncont, num_procs, "NON-CONTIGUOUS");
   return 0;
@@ -47,6 +48,13 @@ int main (int argc, char* argv[]) {
 void run (deque<Proc> &procs, int n, string scheme) {
   Memory m = Memory(); 
   m.print();
+  
+  if (scheme == "CONTIGUOUS"){
+    //do contiguous 
+  }
+  else if(scheme ==  "NON-CONTIGUOUS"){
+    //do non contiguous 
+  }
   return;
 }
 
@@ -69,4 +77,5 @@ void create_proc (string line, deque<Proc> &p) {
     times[2] = tokens[i+1];
     push_deque(p, Proc(name, times));
   }
+  
 }
