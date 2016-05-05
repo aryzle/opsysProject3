@@ -6,6 +6,7 @@
 #include "Proc.h"
 #include "deque.h"
 
+void run (deque<Proc> &procs, int n, string scheme);
 void create_proc (string line, deque<Proc> &p);
 
 int main (int argc, char* argv[]) {
@@ -31,20 +32,38 @@ int main (int argc, char* argv[]) {
     cerr << "couldn't open file " << argv[1] << endl;
     return 1;
   }
-  //TODO: code to run contiguous and then non-contiguous sims
+  /*for (int i=0; i<procs_cont.size(); i++) {
+    procs_cont[i].print();
+    procs_ncont[i].print();
+  }*/
+  run(procs_cont, num_procs, "CONTIGUOUS");
+  run(procs_ncont, num_procs, "NON-CONTIGUOUS");
   return 0;
 }
 
+//
+//TODO: code to run contiguous and non-contiguous sims
+//
+void run (deque<Proc> &procs, int n, string scheme) {
+  Memory m = Memory(); 
+  m.print();
+  return;
+}
+
+// takes a string "A 45 0-350 400-450 .." and a deque
+//
 void create_proc (string line, deque<Proc> &p) {
-  string s;
+  string s, s2;
   vector<int> tokens, times(3, -1);
   char name = line[0];    //get name 'A'-'Z'
   line.erase(0,2);        //erase name and following space from line
   istringstream iss(line);
-  while (getline(iss, s, ' '))
-    tokens.push_back(atoi(s.c_str()));
-  times.push_back(tokens[0]);
-  //TODO: code to create process and add to both deques
+  while (getline(iss, s, ' ')) {          //this is to break down diff times
+    istringstream iss2(s);
+    while (getline(iss2, s2, '-'))        //this is to break up 0-350
+      tokens.push_back(atoi(s2.c_str()));
+  }
+  times[0] = tokens[0];
   for (int i=1; i<tokens.size(); i+=2) {
     times[1] = tokens[i];
     times[2] = tokens[i+1];

@@ -10,7 +10,7 @@ Memory::Memory() {
 }
 
 void Memory::print() const {
-  cout << string(32, '=') << endl;
+  cout << string(32, '=');
   for (int i=0; i<size; i++) {
     if (i%32 == 0) cout << endl;
     cout << frames[i];
