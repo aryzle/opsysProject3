@@ -12,8 +12,9 @@ class Memory {
     vector< pair<int, int> > partitions;
     vector<Proc> procs;
 
-    void print() const;
-    void add(Proc p);
-    bool check(int mem);
-    void defrag();
+    void print () const;
+    void add (Proc& p, int& time);
+    int check (const Proc p, const int time);
+    void defrag ();
+    void complete (int& time, int arrival_t);
 };

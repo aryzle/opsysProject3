@@ -58,7 +58,8 @@ void run (deque<Proc> &procs, int n, string scheme) {
     while (!procs.empty()) {
       p = procs.front();
       procs.pop_front();
-      m.add(p);
+      m.complete(time, p.arrival_t);
+      m.add(p, time);
       m.print();
     }
   }
