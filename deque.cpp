@@ -44,3 +44,12 @@ void print_deque (deque<Proc> procs) {
     cout << " " << itr->name;
   cout << "]" << endl;
 }
+
+
+void change_times(deque<Proc>& procs, int& offset){
+  for (p_d_itr itr = procs.begin(); itr != procs.end(); ++itr) {
+    itr->arrival_t += offset;
+    itr->exit_t += offset;
+  }
+  
+}

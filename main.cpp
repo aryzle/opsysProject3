@@ -49,6 +49,7 @@ void run (deque<Proc> &procs, int n, string scheme) {
   Memory m = Memory(); 
   Proc p;
   int time = 0;
+  int offset = 0;
   const int t_memmove = 1;
   //m.print();
   
@@ -59,9 +60,14 @@ void run (deque<Proc> &procs, int n, string scheme) {
       p = procs.front();
       procs.pop_front();
       m.complete(time, p.arrival_t);
-      m.add(p, time);
+      offset = m.add(p, time);
+      if(offset > 0) {change_times(procs, offset);}
       m.print();
     }
+    //TODO: make function end simulation, take out the processes still in mem
+    //after procs is empty
+    
+    cout << "time " << time << "ms: Simulator ended (" << scheme << " -- First-Fit)" << endl;
   }
   else if(scheme ==  "Non-contiguous"){
     //do non contiguous 

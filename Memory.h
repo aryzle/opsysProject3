@@ -14,8 +14,9 @@ class Memory {
     vector<Proc> procs;
 
     void print () const;
-    void add (Proc& p, int& time);
+    int add (Proc& p, int& time);
     int check (const Proc p, const int time);
-    void defrag (int time);
+    int defrag (int time, Proc p);
     void complete (int& time, int arrival_t);
+    void change_times_mem (int& offset);
 };
