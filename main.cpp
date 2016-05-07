@@ -64,8 +64,8 @@ void run (deque<Proc> &procs, int n, string scheme) {
       if(offset > 0) {change_times(procs, offset);}
       m.print();
     }
-    //TODO: make function end simulation, take out the processes still in mem
-    //after procs is empty
+    int over = 1000000;
+    time = m.end_sim(time, over);
     
     cout << "time " << time << "ms: Simulator ended (" << scheme << " -- First-Fit)" << endl;
   }

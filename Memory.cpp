@@ -50,26 +50,7 @@ int Memory::add (Proc& p, int& time) {
   }
   if(part_index == -2){       //if defrag needs to happen
     offset = defrag(time, p);   //defrag happens and returns the offset(how many frames moved)
-    //change_times_mem(offset);
-    int start = 0;
-    int end = 0;
-    int i = 0;
-    vector<Proc>::iterator itr = procs.begin();
-    while (i < 255){          //changes mem_b, exit_t, and arrival_t
-      char c = frames[i];
-      if (c == '.') break;
-      start = i;
-      while(c == frames[i]){
-        i++;
-      }
-      for (itr = procs.begin(); itr!=procs.end(); itr++) {
-        if(c == itr->name){
-          itr->mem_b = start;
-          itr->arrival_t += offset;
-          itr->exit_t +=offset;
-        }
-      }
-    }
+    change_times_mem(offset);
     p.arrival_t += offset;
     p.exit_t += offset;           //changes times for current proc
     time = p.arrival_t;
@@ -197,7 +178,7 @@ void Memory::complete (int& time, int arrival_t) {
   }
 }
 
-/*void change_times_mem(int& offset){
+void Memory::change_times_mem(int& offset){
   int start = 0;
   int end = 0;
   int i = 0;
@@ -219,4 +200,13 @@ void Memory::complete (int& time, int arrival_t) {
     }
   }
 }
-*/
+
+int Memory::end_sim(int& time, int& arrival_t){
+  int max = 0;
+  vector<Proc>::iterator itr = procs.begin();
+  while (!procs.empty()){
+    max = procs.back().exit_t;
+    complete(time, arrival_t);
+  }
+  return max;
+}

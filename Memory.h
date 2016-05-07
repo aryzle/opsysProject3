@@ -19,4 +19,5 @@ class Memory {
     int defrag (int time, Proc p);
     void complete (int& time, int arrival_t);
     void change_times_mem (int& offset);
+    int end_sim(int& time, int& arrival_t);
 };
