@@ -1,4 +1,5 @@
 #include <vector>
+#include <deque>
 using namespace std;
 
 class Proc;
@@ -15,6 +16,6 @@ class Memory {
     void print () const;
     void add (Proc& p, int& time);
     int check (const Proc p, const int time);
-    void defrag ();
+    void defrag (int time);
     void complete (int& time, int arrival_t);
 };

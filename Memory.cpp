@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <deque>
 #include "Proc.h"
 #include "Memory.h"
 using namespace std;
@@ -26,7 +27,7 @@ void Memory::add (Proc& p, int& time) {
   vector<Proc>::iterator itr;
   time = p.arrival_t;
   cout << "time " << time << "ms: Process " << p.name << " arrived (requires "
-       << p.memory << " frames of phyiscal memory)" << endl;
+       << p.memory << " frames of physical memory)" << endl;
   part_index = check(p, time);
   if (part_index > -1) {
     p.mem_b = partitions[part_index].first;
@@ -63,26 +64,59 @@ int Memory::check (Proc p, int time) {
   }
   cout << "time " << time << "ms: Cannot place process " << p.name << " -- "
        << "starting defragmentation" << endl;
-  //defrag
+  defrag(time);
   return -1;
 }
 
-void Memory::defrag () {
-  int ind=0;
-  int ind2=0;
-  //TODO: Figure out how to do defrag
-  while (frames[ind] != '.'){       //go through mem array until '.'
-    ind++;           
-    while (frames[ind] == '.'){     //goes until another proc or the end
-      ind2++;
+void Memory::defrag(int time) {
+  int start_ind=0;
+  int end_ind=0;
+  int end_let=0;
+  int ind = 32;
+  int moved = 0;
+  char temp[256];
+  //TODO: Figure out why it is off by a few 
+  
+  //while(frames[ind] != '='){
+    while (frames[ind] != '.'){       //go through mem array until '.'
+      ind++; 
     }
-    //--have to delete the periods in middle of procs in mem and move
-    //                the procs after the '.'s to take their place
-    //--have to keep track of which processes are there? or.....?
-    //--have to know how many frames were moved and increment the timer accordingly
+    start_ind = ind;
+    while (frames[ind] == '.'){     //goes until another proc or the end
+      ind++;
+    }
+    end_ind = ind;
+    while(frames[ind] != '.' && frames[ind] != '='){
+      ind++;
+    }
+    end_let = ind;
+    int temp_i = 0;
+    int let_moved = end_let-end_ind;
+    while(start_ind != end_let-(end_ind-start_ind)){
+      temp[temp_i] = frames[end_ind];
+      frames[start_ind] = frames[end_ind];
+      start_ind++;
+      end_ind++;
+      temp_i++;
+    }
+    
+  moved = end_ind - start_ind;
+  memset(frames+(end_let-moved), '.', moved);
+  //}
+  char c;
+  //TODO: adjust proc start and end places inside of frames
+  for(int i = 0; i < size; ++i){
+    c = temp[i];
+    while(temp[i] == c){
+      i++; 
+    }
+    
     
   }
-  
+
+  time += moved;
+  cout << "time " << time << ": Defragmentation complete (moved " << let_moved << " frames " << endl;
+  //print();
 }
 
 // check processes for completion
