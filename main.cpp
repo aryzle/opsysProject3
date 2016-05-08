@@ -71,6 +71,19 @@ void run (deque<Proc> &procs, int n, string scheme) {
   }
   else if(scheme ==  "Non-contiguous"){
     //do non contiguous 
+    cout << "time " << time << "ms: Simulator started (" << scheme << ")" << endl;
+    while(!procs.empty()){
+      p = procs.front();
+      procs.pop_front();
+      m.non_complete(time, p.arrival_t);
+      m.non_add(p,time);
+      m.print();
+    }
+    int over = 1000000;
+    time = m.non_end_sim(time, over);
+    
+    cout << "time " << time << "ms: Simulator ended (" << scheme << ")"<< endl;
+    
   }
   return;
 }
