@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include <deque>
+#include <algorithm>    
 #include "Proc.h"
 #include "Memory.h"
 using namespace std;
@@ -47,6 +48,7 @@ int Memory::add (Proc& p, int& time) {
       }
     }
     procs.push_back(p);
+    return 0;
   }
   if(part_index == -2){       //if defrag needs to happen
     offset = defrag(time, p);   //defrag happens and returns the offset(how many frames moved)
@@ -73,8 +75,8 @@ int Memory::add (Proc& p, int& time) {
       }
     }
     procs.push_back(p);
+    return offset;
   }
-  //return offset;
 }
 
 // return -1 if not enough memory, otherwise returns where it should begin
@@ -84,6 +86,7 @@ int Memory::check (Proc p, int time) {
          << "skipping process " << p.name << endl;
     return -1;
   }
+  sort(partitions.begin(), partitions.end());
   int i;
   for (i=0; i<partitions.size(); i++) {
     if (partitions[i].second - partitions[i].first < p.memory)
@@ -119,15 +122,17 @@ int Memory::defrag(int time, Proc p) {        //returns the amount of frames mov
   end_let = ind;
   temp_i = 0;
   let_moved = end_let-end_ind;
+  int temp_start = start_ind;
+  moved = end_ind - start_ind;
   while(start_ind != end_let-(end_ind-start_ind)){  //"moves letters" to start index
-    temp[temp_i] = frames[end_ind];
+    //temp[temp_i] = frames[end_ind];
     frames[start_ind] = frames[end_ind];
     start_ind++;
     end_ind++;
-    temp_i++;
+    //temp_i++;
   }
   
-  moved = end_ind - start_ind;
+ 
   memset(frames+(end_let-moved), '.', moved);   //sets '.' at end of letters
   
   int more_moved = 0;
@@ -136,8 +141,9 @@ int Memory::defrag(int time, Proc p) {        //returns the amount of frames mov
       ind++;
     }
     else {
-      more_moved = defrag_helper(ind, end_let);
+      more_moved = defrag_helper(ind, end_let, moved);
     }
+
   } 
   let_moved += more_moved;
 
@@ -147,9 +153,9 @@ int Memory::defrag(int time, Proc p) {        //returns the amount of frames mov
   int start = 0;
   int end = 0;
   int let_i =0;
-  for(int i = 0; i < temp_i; i++){          //figuring out which procs are in frames
-    c = temp[i];
-    while(temp[i] == c){
+  for(int i = temp_start; i < let_moved+temp_start; i++){          //figuring out which procs are in frames
+    c = frames[i];
+    while(frames[i] == c){
       i++; 
     }
     lets[let_i] = c;
@@ -164,22 +170,24 @@ int Memory::defrag(int time, Proc p) {        //returns the amount of frames mov
       cout << " " << lets[x] << ")" << endl;
   }
   
-  partitions[0].first = end_let - moved;    //sets new partition start and end
-  partitions[0].second = size-1;
+  partitions.clear();
+  partitions.push_back(pair<int, int> (let_moved+temp_start, size-1));
+  //partitions[0].first = let_moved+temp_start;    //sets new partition start and end
+  //partitions[0].second = size-1;
   
   print();
   return let_moved;
 }
 
-int Memory::defrag_helper(int ind, int end_let){
+int Memory::defrag_helper(int ind, int end_let, int moved){
   int start_ind=0;
   int end_ind=0;
-  int moved = 0;
+  int moved2 = 0;
   char temp[256];
   int let_moved;
   int temp_i = 0;
   
-  start_ind = end_let;
+  start_ind = end_let-moved;
   end_ind = ind;
   while(frames[ind] != '.'){ //goes to end of letters
     ind++;
@@ -191,8 +199,8 @@ int Memory::defrag_helper(int ind, int end_let){
     start_ind++;
     end_ind++;
   }
-  moved = end_ind - start_ind;
-  memset(frames+(end_let-moved), '.', moved);   //sets '.' at end of letters
+  moved2 = end_ind - start_ind;
+  memset(frames+(end_let-moved2), '.', moved2);   //sets '.' at end of letters
   
   return let_moved;
 }
@@ -205,6 +213,7 @@ void Memory::complete (int& time, int arrival_t) {
       cout << "time " << itr->exit_t << "ms: Process " << itr->name
            << " removed from physical memory" << endl;
       partitions.push_back(pair<int, int> (itr->mem_b, itr->mem_b+itr->memory));
+      sort(partitions.begin(), partitions.end());
       empty += itr->memory;
       for (int j=itr->mem_b; j<itr->mem_b+itr->memory; j++)
         frames[j] = '.';

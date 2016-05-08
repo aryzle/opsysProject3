@@ -6,7 +6,7 @@
 #include "Proc.h"
 #include "deque.h"
 
-void run (deque<Proc> &procs, int n, string scheme);
+void run (deque<Proc> &procs, int n, string scheme, string algo);
 void create_proc (string line, deque<Proc> &p);
 
 int main (int argc, char* argv[]) {
@@ -17,6 +17,9 @@ int main (int argc, char* argv[]) {
   string line;
   deque<Proc> procs_cont;
   deque<Proc> procs_ncont;
+  deque<Proc> procs_cont2;
+  deque<Proc> procs_cont3;
+
   int num_procs = 0;
   ifstream iFile;
   iFile.open(argv[1]);
@@ -36,16 +39,21 @@ int main (int argc, char* argv[]) {
     procs_cont[i].print();
     procs_ncont[i].print();
   }*/
+  procs_cont2 = procs_cont;
+  procs_cont3 = procs_cont;
   
-  run(procs_cont, num_procs, "Contiguous");
-  run(procs_ncont, num_procs, "Non-contiguous");
+  run(procs_cont, num_procs, "Contiguous", "First");
+  //run(procs_cont2, num_procs, "Contiguous", "Next");
+  //run(procs_cont3, num_procs, "Contiguous", "Best");
+
+  //run(procs_ncont, num_procs, "Non-contiguous", "");
   return 0;
 }
 
 //
 //TODO: code to run contiguous and non-contiguous sims
 //
-void run (deque<Proc> &procs, int n, string scheme) {
+void run (deque<Proc> &procs, int n, string scheme, string algo) {
   Memory m = Memory(); 
   Proc p;
   int time = 0;
@@ -55,19 +63,30 @@ void run (deque<Proc> &procs, int n, string scheme) {
   
   if (scheme == "Contiguous"){
     cout << "time " << time << "ms: Simulator started (" << scheme << " -- "
-         << "First-Fit)" << endl;
-    while (!procs.empty()) {
-      p = procs.front();
-      procs.pop_front();
-      m.complete(time, p.arrival_t);
-      offset = m.add(p, time);
-      if(offset > 0) {change_times(procs, offset);}
-      m.print();
+           << algo << "-Fit)" << endl;
+    if( algo == "First"){                          
+      while (!procs.empty()) {
+        p = procs.front();
+        procs.pop_front();
+        m.complete(time, p.arrival_t);
+        offset = m.add(p, time);
+        if(offset > 0) {change_times(procs, offset);}
+        m.print();
+      }
+      int over = 1000000;
+      time = m.end_sim(time, over);
+      
     }
-    int over = 1000000;
-    time = m.end_sim(time, over);
-    
-    cout << "time " << time << "ms: Simulator ended (" << scheme << " -- First-Fit)" << endl;
+    else if (algo == "Next"){
+      while(!procs.empty()){
+        
+      }
+      
+    }
+    else if (algo == "Best"){
+      
+    }
+     cout << "time " << time << "ms: Simulator ended (" << scheme << " -- " << algo << "-Fit)" << endl;
   }
   else if(scheme ==  "Non-contiguous"){
     //do non contiguous 

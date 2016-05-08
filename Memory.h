@@ -18,7 +18,7 @@ class Memory {
     int add (Proc& p, int& time);
     int check (const Proc p, const int time);
     int defrag (int time, Proc p);
-    int defrag_helper(int ind, int end_let);
+    int defrag_helper(int ind, int end_let, int moved);
     void complete (int& time, int arrival_t);
     void non_complete (int& time, int& arrival_t);
     void non_add(Proc& p, int& time);
