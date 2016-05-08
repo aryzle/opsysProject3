@@ -42,9 +42,9 @@ int main (int argc, char* argv[]) {
   procs_cont2 = procs_cont;
   procs_cont3 = procs_cont;
   
-  run(procs_cont, num_procs, "Contiguous", "First");
+  //run(procs_cont, num_procs, "Contiguous", "First");
   //run(procs_cont2, num_procs, "Contiguous", "Next");
-  //run(procs_cont3, num_procs, "Contiguous", "Best");
+  run(procs_cont3, num_procs, "Contiguous", "Best");
 
   //run(procs_ncont, num_procs, "Non-contiguous", "");
   return 0;
@@ -69,7 +69,7 @@ void run (deque<Proc> &procs, int n, string scheme, string algo) {
         p = procs.front();
         procs.pop_front();
         m.complete(time, p.arrival_t);
-        offset = m.add(p, time);
+        offset = m.add(p, time, algo);
         if(offset > 0) {change_times(procs, offset);}
         m.print();
       }
@@ -78,15 +78,22 @@ void run (deque<Proc> &procs, int n, string scheme, string algo) {
       
     }
     else if (algo == "Next"){
-      while(!procs.empty()){
-        
-      }
+      
       
     }
     else if (algo == "Best"){
-      
+      while(!procs.empty()){
+        p = procs.front();
+        procs.pop_front();
+        m.complete(time, p.arrival_t);
+        offset = m.add(p,time, algo);
+        if(offset>0) {change_times(procs, offset);}
+        m.print();
+      }
+      int over = 1000000;
+      time = m.end_sim(time, over);
     }
-     cout << "time " << time << "ms: Simulator ended (" << scheme << " -- " << algo << "-Fit)" << endl;
+    cout << "time " << time << "ms: Simulator ended (" << scheme << " -- " << algo << "-Fit)" << endl;
   }
   else if(scheme ==  "Non-contiguous"){
     //do non contiguous 

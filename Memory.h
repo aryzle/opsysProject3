@@ -15,8 +15,10 @@ class Memory {
   
 
     void print () const;
-    int add (Proc& p, int& time);
-    int check (const Proc p, const int time);
+    int add (Proc& p, int& time, string& algo);
+    int check (const Proc p, const int time, string &algo);
+    //int best_check (const Proc p, const int time);
+    //int next_check (const Proc p, const int time);
     int defrag (int time, Proc p);
     int defrag_helper(int ind, int end_let, int moved);
     void complete (int& time, int arrival_t);

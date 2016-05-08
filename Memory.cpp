@@ -23,15 +23,18 @@ void Memory::print () const {
   cout << endl << string(32, '=') << endl;
 }
 
-int Memory::add (Proc& p, int& time) {
+int Memory::add (Proc& p, int& time, string& algo) {
   int offset;
   int part_index;
   vector<Proc>::iterator itr;
   time = p.arrival_t;
   cout << "time " << time << "ms: Process " << p.name << " arrived (requires "
        << p.memory << " frames of physical memory)" << endl;
-  part_index = check(p, time);
+  part_index = check(p, time, algo);
+  //else if (algo == "Next") part_index = next_check(p,time);
+  //else if (algo == "Best") part_index = best_check(p, time);
   if (part_index > -1) {
+    cout << part_index << endl;
     p.mem_b = partitions[part_index].first;
     partitions[part_index].first = p.mem_b + p.memory;
     empty -= p.memory;
@@ -41,6 +44,7 @@ int Memory::add (Proc& p, int& time) {
       frames[j] = p.name;
     cout << "time " << time << "ms: Placed process " << p.name << " in "
          << "memory:" << endl;
+    //print();
     for (itr = procs.begin(); itr!=procs.end(); itr++) {
       if (p.exit_t < itr->exit_t) {
         procs.insert(itr, p);
@@ -56,7 +60,7 @@ int Memory::add (Proc& p, int& time) {
     p.arrival_t += offset;
     p.exit_t += offset;           //changes times for current proc
     time = p.arrival_t;
-    int new_part_index = check(p, time);    //runs the add function
+    int new_part_index = check(p, time, algo);    //runs the add function
     p.mem_b = partitions[new_part_index].first;
     partitions[new_part_index].first = p.mem_b + p.memory;
     empty -= p.memory;
@@ -80,18 +84,56 @@ int Memory::add (Proc& p, int& time) {
 }
 
 // return -1 if not enough memory, otherwise returns where it should begin
-int Memory::check (Proc p, int time) {
+int Memory::check (Proc p, int time, string& algo) {
   if (p.memory > empty) {
     cout << "time " << time << "ms: Cannot place process " << p.name << " -- "
          << "skipping process " << p.name << endl;
     return -1;
   }
-  sort(partitions.begin(), partitions.end());
-  int i;
-  for (i=0; i<partitions.size(); i++) {
-    if (partitions[i].second - partitions[i].first < p.memory)
-      continue;
-    return i;
+  if (algo == "First"){
+    sort(partitions.begin(), partitions.end());
+    int i;
+    for (i=0;i<partitions.size(); i++){         //combines adjacent partitions
+      if (partitions[i].second == partitions[i+1].first){
+        partitions[i].second = partitions[i+1].second;
+        partitions.erase(partitions.begin()+i+1);
+      }
+    }
+    for (i=0; i<partitions.size(); i++) {
+      if (partitions[i].second - partitions[i].first < p.memory)
+        continue;
+      return i;
+    }
+  }
+  else if(algo == "Next"){
+    
+  }
+  else if (algo == "Best"){
+    sort(partitions.begin(), partitions.end());
+    int i;
+    int best = 256;
+    int flag = 0;
+    int best_i = 0;
+    for (i=0;i<partitions.size(); i++){
+      if (partitions[i].second == partitions[i+1].first){
+        partitions[i].second = partitions[i+1].second;
+        partitions.erase(partitions.begin()+i+1);
+      }
+    }
+    
+    for (i=0; i<partitions.size(); i++) {
+      if (partitions[i].second - partitions[i].first >= p.memory){
+        if(partitions[i].second - partitions[i].first < best) {
+          best = partitions[i].second - partitions[i].first;
+          best_i = i;
+        }
+      }
+      flag = 1;
+    }
+    if(flag == 1){
+      return best_i;
+    }
+    
   }
   cout << "time " << time << "ms: Cannot place process " << p.name << " -- "
        << "starting defragmentation" << endl;
@@ -213,7 +255,7 @@ void Memory::complete (int& time, int arrival_t) {
       cout << "time " << itr->exit_t << "ms: Process " << itr->name
            << " removed from physical memory" << endl;
       partitions.push_back(pair<int, int> (itr->mem_b, itr->mem_b+itr->memory));
-      sort(partitions.begin(), partitions.end());
+      //sort(partitions.begin(), partitions.end());
       empty += itr->memory;
       for (int j=itr->mem_b; j<itr->mem_b+itr->memory; j++)
         frames[j] = '.';
