@@ -31,10 +31,7 @@ int Memory::add (Proc& p, int& time, string& algo) {
   cout << "time " << time << "ms: Process " << p.name << " arrived (requires "
        << p.memory << " frames of physical memory)" << endl;
   part_index = check(p, time, algo);
-  //else if (algo == "Next") part_index = next_check(p,time);
-  //else if (algo == "Best") part_index = best_check(p, time);
   if (part_index > -1) {
-    cout << part_index << endl;
     p.mem_b = partitions[part_index].first;
     partitions[part_index].first = p.mem_b + p.memory;
     empty -= p.memory;
@@ -44,7 +41,6 @@ int Memory::add (Proc& p, int& time, string& algo) {
       frames[j] = p.name;
     cout << "time " << time << "ms: Placed process " << p.name << " in "
          << "memory:" << endl;
-    //print();
     for (itr = procs.begin(); itr!=procs.end(); itr++) {
       if (p.exit_t < itr->exit_t) {
         procs.insert(itr, p);
@@ -106,9 +102,20 @@ int Memory::check (Proc p, int time, string& algo) {
     }
   }
   else if(algo == "Next"){
-    
+    int i;
+    /*for (i=0;i<partitions.size(); i++){
+      if (partitions[i].second == partitions[i+1].first){
+        partitions[i].second = partitions[i+1].second;
+        partitions.erase(partitions.begin()+i+1);
+      }
+    }*/
+    for (i=partitions.size()-1; i>=0; --i) {  //the last partition will be the last placed?
+      if (partitions[i].second - partitions[i].first < p.memory)
+        continue;
+      return i;
+    }
   }
-  else if (algo == "Best"){
+  else if (algo == "Best"){       //looks for the smallest partition big enough for proc p
     sort(partitions.begin(), partitions.end());
     int i;
     int best = 256;
@@ -255,7 +262,6 @@ void Memory::complete (int& time, int arrival_t) {
       cout << "time " << itr->exit_t << "ms: Process " << itr->name
            << " removed from physical memory" << endl;
       partitions.push_back(pair<int, int> (itr->mem_b, itr->mem_b+itr->memory));
-      //sort(partitions.begin(), partitions.end());
       empty += itr->memory;
       for (int j=itr->mem_b; j<itr->mem_b+itr->memory; j++)
         frames[j] = '.';
