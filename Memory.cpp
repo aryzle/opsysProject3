@@ -77,6 +77,7 @@ int Memory::add (Proc& p, int& time, string& algo) {
     procs.push_back(p);
     return offset;
   }
+  return 0;
 }
 
 // return -1 if not enough memory, otherwise returns where it should begin
@@ -89,13 +90,13 @@ int Memory::check (Proc p, int time, string& algo) {
   if (algo == "First"){
     sort(partitions.begin(), partitions.end());
     int i;
-    for (i=0;i<partitions.size(); i++){         //combines adjacent partitions
+    for (i=0;i<(signed)partitions.size(); i++){         //combines adjacent partitions
       if (partitions[i].second == partitions[i+1].first){
         partitions[i].second = partitions[i+1].second;
         partitions.erase(partitions.begin()+i+1);
       }
     }
-    for (i=0; i<partitions.size(); i++) {
+    for (i=0; i<(signed)partitions.size(); i++) {
       if (partitions[i].second - partitions[i].first < p.memory)
         continue;
       return i;
@@ -121,14 +122,14 @@ int Memory::check (Proc p, int time, string& algo) {
     int best = 256;
     int flag = 0;
     int best_i = 0;
-    for (i=0;i<partitions.size(); i++){
+    for (i=0;i<(signed)partitions.size(); i++){
       if (partitions[i].second == partitions[i+1].first){
         partitions[i].second = partitions[i+1].second;
         partitions.erase(partitions.begin()+i+1);
       }
     }
     
-    for (i=0; i<partitions.size(); i++) {
+    for (i=0; i<(signed)partitions.size(); i++) {
       if (partitions[i].second - partitions[i].first >= p.memory){
         if(partitions[i].second - partitions[i].first < best) {
           best = partitions[i].second - partitions[i].first;
@@ -153,9 +154,7 @@ int Memory::defrag(int time, Proc p) {        //returns the amount of frames mov
   int end_let=0;
   int ind = 0;
   int moved = 0;
-  char temp[256];
   int let_moved;
-  int temp_i = 0;
 
   while (frames[ind] != '.'){       //go through mem array until '.'
     ind++; 
@@ -169,16 +168,13 @@ int Memory::defrag(int time, Proc p) {        //returns the amount of frames mov
     ind++;
   }
   end_let = ind;
-  temp_i = 0;
   let_moved = end_let-end_ind;
   int temp_start = start_ind;
   moved = end_ind - start_ind;
   while(start_ind != end_let-(end_ind-start_ind)){  //"moves letters" to start index
-    //temp[temp_i] = frames[end_ind];
     frames[start_ind] = frames[end_ind];
     start_ind++;
     end_ind++;
-    //temp_i++;
   }
   
  
@@ -199,8 +195,6 @@ int Memory::defrag(int time, Proc p) {        //returns the amount of frames mov
   char c;
   vector<Proc>::iterator itr;
   char lets[26];
-  int start = 0;
-  int end = 0;
   int let_i =0;
   for(int i = temp_start; i < let_moved+temp_start; i++){          //figuring out which procs are in frames
     c = frames[i];
@@ -232,9 +226,7 @@ int Memory::defrag_helper(int ind, int end_let, int moved){
   int start_ind=0;
   int end_ind=0;
   int moved2 = 0;
-  char temp[256];
   int let_moved;
-  int temp_i = 0;
   
   start_ind = end_let-moved;
   end_ind = ind;
@@ -276,7 +268,6 @@ void Memory::complete (int& time, int arrival_t) {
 //change times after defrag and mem start indexes
 void Memory::change_times_mem(int& offset){
   int start = 0;
-  int end = 0;
   int i = 0;
   vector<Proc>::iterator itr = procs.begin();
   while (i < 255){

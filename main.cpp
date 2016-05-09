@@ -12,6 +12,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cstdlib>
 #include "Memory.h"
 #include "Proc.h"
 #include "deque.h"
@@ -39,7 +40,7 @@ int main (int argc, char* argv[]) {
   iFile.open(argv[1]);
   if (iFile.is_open()) {
     getline(iFile, line);
-    num_procs = stoi(line);     //get N ex: "20"
+    num_procs = atoi(line.c_str());     //get N ex: "20"
     while (getline(iFile, line)) {
       create_proc(line, procs_cont);
       create_proc(line, procs_ncont);
@@ -81,16 +82,23 @@ int main (int argc, char* argv[]) {
   procs_cont2 = procs_cont;
   procs_cont3 = procs_cont;
   
+  /* Contiguous Memory */
   run(procs_cont, num_procs, "Contiguous", "First");
+  cout << endl;
   run(procs_cont2, num_procs, "Contiguous", "Next");
+  cout << endl;
   run(procs_cont3, num_procs, "Contiguous", "Best");
+  cout << endl;
 
+  /* Non-Contiguous Memory */
   run(procs_ncont, num_procs, "Non-contiguous", "");
+  cout << endl;
   
+  /*Virtual Memory */
   opt(frames3, pages, num_pages, F);
-  //cout << endl;
+  cout << endl;
   lru(frames, pages, F);
-  //cout << endl;
+  cout << endl;
   lfu(frames2, pages, F);
   return 0;
 }
@@ -100,7 +108,7 @@ void run (deque<Proc> &procs, int n, string scheme, string algo) {
   Proc p;
   int time = 0;
   int offset = 0;
-  const int t_memmove = 1;
+  //const int t_memmove = 1;
   //m.print();
   
   if (scheme == "Contiguous"){
@@ -178,7 +186,7 @@ void create_proc (string line, deque<Proc> &p) {
       tokens.push_back(atoi(s2.c_str()));
   }
   times[0] = tokens[0];
-  for (int i=1; i<tokens.size(); i+=2) {
+  for (unsigned int i=1; i<tokens.size(); i+=2) {
     times[1] = tokens[i];
     times[2] = tokens[i+1];
     push_deque(p, Proc(name, times));
