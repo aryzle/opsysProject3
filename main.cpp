@@ -35,7 +35,6 @@ int main (int argc, char* argv[]) {
   deque<Proc> procs_cont2;
   deque<Proc> procs_cont3;
   deque<Proc> procs_ncont;
-
   int num_procs = 0;
   ifstream iFile;
   iFile.open(argv[1]);
@@ -53,7 +52,6 @@ int main (int argc, char* argv[]) {
   }
   procs_cont2 = procs_cont;
   procs_cont3 = procs_cont;
-  
   //added this for virtual memory 
   ifstream in_str;
   in_str.open(argv[2], ifstream::in);
@@ -74,7 +72,6 @@ int main (int argc, char* argv[]) {
       num_pages++;
     }    
   }
-
   int F = 3;
   int frames[F];
   int i=0;
@@ -99,7 +96,9 @@ int main (int argc, char* argv[]) {
 
   /*Virtual Memory */
   run_virt(frames3, pages, num_pages, F, "OPT");
+  cout << endl;
   run_virt(frames3, pages, num_pages, F, "LRU");
+  cout << endl;
   run_virt(frames3, pages, num_pages, F, "LFU");
   
   return 0;
@@ -175,19 +174,17 @@ void out(int frames[], int &F){
 }
 
 //function for running the three virtual memory functions
-void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string virt_algo){
-  int num_page_faults = 0;    
-  cout << "Simulating " << virt_algo << " with fixed frame size of " << F << endl;
-  int cur_fs = 0;
-  int ind = 0;
+void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F,
+              string virt_algo) {
+  cout << "Simulating " << virt_algo << " with fixed frame size of " << F
+       << endl;
+  int num_page_faults = 0, cur_fs = 0, ind=0, f_ind=0, victim;
   int size = pages.size();
-  int f_ind = 0;
-  int victim;
   //keeps track of the index page was last used
   vector<int> page_track(100);
   while (ind < size){
     cout << "referencing page " << pages[ind];
-    if (cur_fs == 0){                                       //starting sim,frames empty
+    if (cur_fs == 0){                           //starting sim,frames empty
       frames[f_ind] = pages[ind];
       out(frames, F);
       cout <<  " PAGE FAULT (no victim page)" << endl;
@@ -197,7 +194,7 @@ void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string v
     }
     else {                                                  
       int flag = 0;
-      for (int x = 0; x<F; x++){                          //checks to see if page in frame
+      for (int x = 0; x<F; x++){              //checks to see if page in frame
         if (pages[ind] == frames[x]){
           out(frames, F);
           cout << endl;
@@ -205,7 +202,6 @@ void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string v
           break;
         }
       }
-      
       if(f_ind < F && flag == 0){                     //if frame not empty
         frames[f_ind] = pages[ind];
         out(frames, F);
@@ -213,7 +209,7 @@ void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string v
         f_ind++;
         num_page_faults++;
       }
-      else if (f_ind >= F && flag == 0){              //finds victim page by looking forward
+      else if (f_ind >= F && flag == 0){  //finds victim page by looking forward
         int min;
         int v_ind = 0;
         int max_ind = 0;
@@ -290,6 +286,6 @@ void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string v
       page_track[pages[ind]]++;
     ind++;
   }
-  cout << "End of " <<  virt_algo << " simulation (" << num_page_faults << " page faults)" << endl;
+  cout << "End of " <<  virt_algo << " simulation (" << num_page_faults
+       << " page faults)" << endl;
 }
-
