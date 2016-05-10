@@ -82,20 +82,20 @@ int main (int argc, char* argv[]) {
   copy(frames, frames + F, frames3);
   
   /* Contiguous Memory */
-  //run(procs_cont, num_procs, "Contiguous", "First");
+  run(procs_cont, num_procs, "Contiguous", "First");
   cout << endl;
-  //run(procs_cont2, num_procs, "Contiguous", "Next");
+  run(procs_cont2, num_procs, "Contiguous", "Next");
   cout << endl;
-  //run(procs_cont3, num_procs, "Contiguous", "Best");
+  run(procs_cont3, num_procs, "Contiguous", "Best");
   cout << endl;
 
   /* Non-Contiguous Memory */
-  //run(procs_ncont, num_procs, "Non-contiguous", "");
+  run(procs_ncont, num_procs, "Non-contiguous", "");
   cout << endl;
 
   /*Virtual Memory */
-  //run_virt(frames3, pages, num_pages, F, "OPT");
-  //run_virt(frames3, pages, num_pages, F, "LRU");
+  run_virt(frames3, pages, num_pages, F, "OPT");
+  run_virt(frames3, pages, num_pages, F, "LRU");
   run_virt(frames3, pages, num_pages, F, "LFU");
   return 0;
 }
@@ -285,6 +285,6 @@ void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string v
       page_track[pages[ind]]++;
     ind++;
   }
-  cout << "End of " <<  virt_algo << "  simulation (" << num_page_faults << " page faults)" << endl;
+  cout << "End of " <<  virt_algo << " simulation (" << num_page_faults << " page faults)" << endl;
 }
 
