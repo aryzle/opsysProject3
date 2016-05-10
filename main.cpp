@@ -26,7 +26,7 @@ void out(int frames[], int &F);
 
 int main (int argc, char* argv[]) {
   if (argc != 3) {
-    cout << "Usage: " << argv[0] << " input" << endl;
+    cout << "Usage: " << argv[0] << " input_phys input_virtual" << endl;
     return 1;
   }
   string line;
@@ -55,6 +55,10 @@ int main (int argc, char* argv[]) {
   //added this for virtual memory 
   ifstream in_str;
   in_str.open(argv[2], ifstream::in);
+  if (!in_str.is_open()) {
+    cerr << "couldn't open file " << argv[2] << endl;
+    return 1;
+  }
   string line2;
   vector<int> pages;
   int num_pages = 0;

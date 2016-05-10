@@ -28,5 +28,4 @@ class Memory {
     void change_times_mem (int& offset);
     int end_sim(int& time, int& arrival_t);
     int non_end_sim(int& time, int& arrival_t);
-
 };

@@ -93,13 +93,13 @@ int Memory::check (Proc p, int time, string& algo) {
   int i;
   //combines adjacent partitions
   sort(partitions.begin(), partitions.end());
-  for (i=0;i<(signed)partitions.size(); i++) {
-    if (partitions[i].second == partitions[i+1].first) {
-      partitions[i].second = partitions[i+1].second;
-      partitions.erase(partitions.begin()+i+1);
-    }
-  }
   if (algo == "First") {
+    for (i=0;i<(signed)partitions.size(); i++) {
+      if (partitions[i].second == partitions[i+1].first) {
+        partitions[i].second = partitions[i+1].second;
+        partitions.erase(partitions.begin()+i+1);
+      }
+    }
     for (i=0; i<partitions.size(); i++) {
       if (partitions[i].second - partitions[i].first < p.memory)
         continue;
@@ -107,13 +107,29 @@ int Memory::check (Proc p, int time, string& algo) {
     }
   }
   else if (algo == "Next") {    //TODO: fix this
-    for (i=partitions.size()-1; i>=0; --i) {
+    int begin_i = 0;
+    for (i=0; i<partitions.size(); i++) {
+      if (end_last_frame < partitions[i].first)
+        begin_i = i;
+    }
+    for (i=begin_i; i<partitions.size(); ++i) {
+      if (partitions[i].second - partitions[i].first < p.memory)
+        continue;
+      return i;
+    }
+    for (i=0; i<begin_i; i++) {
       if (partitions[i].second - partitions[i].first < p.memory)
         continue;
       return i;
     }
   }
   else if (algo == "Best") {      //looks for the smallest partition big enough
+    for (i=0;i<(signed)partitions.size(); i++) {
+      if (partitions[i].second == partitions[i+1].first) {
+        partitions[i].second = partitions[i+1].second;
+        partitions.erase(partitions.begin()+i+1);
+      }
+    }
     int best = 256;
     int flag = 0;
     int best_i = 0;
@@ -128,6 +144,12 @@ int Memory::check (Proc p, int time, string& algo) {
     }
     if(flag == 1){
       return best_i;
+    }
+  }
+  for (i=0;i<(signed)partitions.size(); i++) {
+    if (partitions[i].second == partitions[i+1].first) {
+      partitions[i].second = partitions[i+1].second;
+      partitions.erase(partitions.begin()+i+1);
     }
   }
   cout << "time " << time << "ms: Cannot place process " << p.name << " -- "
