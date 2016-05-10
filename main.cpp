@@ -101,6 +101,7 @@ int main (int argc, char* argv[]) {
   run_virt(frames3, pages, num_pages, F, "OPT");
   run_virt(frames3, pages, num_pages, F, "LRU");
   run_virt(frames3, pages, num_pages, F, "LFU");
+  
   return 0;
 }
 
