@@ -23,6 +23,7 @@ void opt(int frames[], vector<int> &pages, int &num_pages, int &F);
 void lru(int frames[], vector<int> &pages, int &F);
 void lfu(int frames[], vector<int> &pages, int &F);
 void out(int frames[], int &F);
+void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string virt_algo){
 
 int main (int argc, char* argv[]) {
   if (argc != 3) {
@@ -83,23 +84,24 @@ int main (int argc, char* argv[]) {
   procs_cont3 = procs_cont;
   
   /* Contiguous Memory */
-  run(procs_cont, num_procs, "Contiguous", "First");
+  //run(procs_cont, num_procs, "Contiguous", "First");
   cout << endl;
-  run(procs_cont2, num_procs, "Contiguous", "Next");
+  //run(procs_cont2, num_procs, "Contiguous", "Next");
   cout << endl;
-  run(procs_cont3, num_procs, "Contiguous", "Best");
+  //run(procs_cont3, num_procs, "Contiguous", "Best");
   cout << endl;
 
   /* Non-Contiguous Memory */
-  run(procs_ncont, num_procs, "Non-contiguous", "");
+  //run(procs_ncont, num_procs, "Non-contiguous", "");
   cout << endl;
   
   /*Virtual Memory */
+  run_virt(frames3, pages, num_pages, F, "opt");
   opt(frames3, pages, num_pages, F);
   cout << endl;
-  lru(frames, pages, F);
+  //lru(frames, pages, F);
   cout << endl;
-  lfu(frames2, pages, F);
+  //lfu(frames2, pages, F);
   return 0;
 }
 
@@ -205,6 +207,96 @@ void out(int frames[], int &F){
   cout << "]";
 }
 
+
+
+void run_virt(int frames[], vector<int> &pages, int &num_pages, int &F, string& virt_algo){
+  int num_page_faults = 0;    
+  cout << "Simulating " << virt_algo << " with fixed frame size of " << F << endl;
+  int cur_fs = 0;
+  int ind = 0;
+  int size = pages.size();
+  int f_ind = 0;
+  int victim;
+  //keeps track of the index page was last used
+  vector<int> page_track(100);
+  while (ind < size){
+      cout << "referencing page " << pages[ind];
+      if (cur_fs == 0){                                       //starting sim,frames empty
+          frames[f_ind] = pages[ind];
+          out(frames, F);
+          cout <<  " PAGE FAULT (no victim page)" << endl;
+          cur_fs = 1;
+          f_ind++;
+          num_page_faults++;
+      }
+      else {                                                  
+          int flag = 0;
+          for (int x = 0; x<F; x++){                          //checks to see if page in frame
+              if (pages[ind] == frames[x]){
+                  out(frames, F);
+                  cout << endl;
+                  flag =1;
+                  break;
+              }
+          }
+          if(f_ind < F && flag == 0){                     //if frame not empty
+              frames[f_ind] = pages[ind];
+              out(frames, F);
+              cout << " PAGE FAULT (no victim page)" <<endl;
+              f_ind++;
+              num_page_faults++;
+          }
+          else if (f_ind >= F && flag == 0 && virt_algo == "opt"){              //finds victim page by looking forward
+            int v_ind = 0;
+            int max_ind = 0;
+            int i=0;
+            while(i<F){
+                for(int x=ind; x<num_pages; x++){
+                    if(pages[x] == frames[i]){
+                        if(x > max_ind){
+                            max_ind = x;
+                            v_ind = i;
+                        }
+                        break;
+                    }
+                    else if ( x == num_pages-1){
+                        if(max_ind == num_pages){
+                            if (frames[i] < frames[v_ind] ){
+                                v_ind = i;
+                            }
+                        }
+                        else {
+                            max_ind = num_pages;
+                            v_ind = i;
+                        }
+                    }
+                }
+                i++;
+            }
+            if (ind == num_pages-1){
+                int min = frames[0];
+                v_ind = 0;
+                for(int x = 0; x<F; x++){
+                    if (frames[x] < min) {
+                        min = frames[x];
+                        v_ind = x;
+                    }
+                }
+            }
+            victim = frames[v_ind];
+            frames[v_ind] = pages[ind];
+            out(frames, F);
+            cout << " PAGE FAULT (victim page " << victim << ")" << endl; 
+            num_page_faults++;
+          }
+      }
+      
+      page_track[pages[ind]] = ind;
+      ind++;
+  }
+  
+  cout << "End of " <<  virt_algo << "  simulation (" << num_page_faults << " page faults)" << endl;
+}
 void opt(int frames[], vector<int> &pages, int &num_pages, int &F){
   int num_page_faults = 0;    
   cout << "Simulating OPT with fixed frame size of " << F << endl;
@@ -286,9 +378,12 @@ void opt(int frames[], vector<int> &pages, int &num_pages, int &F){
               cout << " PAGE FAULT (victim page " << victim << ")" << endl; 
               num_page_faults++;
           }
+          
       }
-      
-      page_track[pages[ind]] = ind;
+      if(virt_algo == "opt"){
+        page_track[pages[ind]] = ind;
+      }
+      else if(virt_algo)
       ind++;
   }
   
