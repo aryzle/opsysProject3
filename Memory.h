@@ -8,7 +8,7 @@ class Memory {
   public:
     Memory ();
     Memory (string);
-    int size, empty;
+    int size, empty, end_last_frame;
     char frames[256];
     vector< pair<int, int> > partitions;
     vector<Proc> procs;
@@ -19,7 +19,7 @@ class Memory {
     int check (const Proc p, const int time, string &algo);
     //int best_check (const Proc p, const int time);
     //int next_check (const Proc p, const int time);
-    int defrag (int time, Proc p);
+    int defrag (int time);
     int defrag_helper(int ind, int end_let, int moved);
     void complete (int& time, int arrival_t);
     void non_complete (int& time, int& arrival_t);
