@@ -90,11 +90,11 @@ int Memory::check (Proc p, int time, string& algo) {
          << "skipping process " << p.name << endl;
     return -1;
   }
-  int i;
+  unsigned int i;
   //combines adjacent partitions
   sort(partitions.begin(), partitions.end());
   if (algo == "First") {
-    for (i=0;i<(signed)partitions.size(); i++) {
+    for (i=0;i<partitions.size(); i++) {
       if (partitions[i].second == partitions[i+1].first) {
         partitions[i].second = partitions[i+1].second;
         partitions.erase(partitions.begin()+i+1);
@@ -107,7 +107,7 @@ int Memory::check (Proc p, int time, string& algo) {
     }
   }
   else if (algo == "Next") {    //TODO: fix this
-    int begin_i = 0;
+    unsigned int begin_i = 0;
     for (i=0; i<partitions.size(); i++) {
       if (end_last_frame < partitions[i].first)
         begin_i = i;
@@ -124,7 +124,7 @@ int Memory::check (Proc p, int time, string& algo) {
     }
   }
   else if (algo == "Best") {      //looks for the smallest partition big enough
-    for (i=0;i<(signed)partitions.size(); i++) {
+    for (i=0; i<partitions.size(); i++) {
       if (partitions[i].second == partitions[i+1].first) {
         partitions[i].second = partitions[i+1].second;
         partitions.erase(partitions.begin()+i+1);
@@ -146,7 +146,7 @@ int Memory::check (Proc p, int time, string& algo) {
       return best_i;
     }
   }
-  for (i=0;i<(signed)partitions.size(); i++) {
+  for (i=0; i<partitions.size(); i++) {
     if (partitions[i].second == partitions[i+1].first) {
       partitions[i].second = partitions[i+1].second;
       partitions.erase(partitions.begin()+i+1);
