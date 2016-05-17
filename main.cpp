@@ -97,9 +97,10 @@ int main (int argc, char* argv[]) {
   /*Virtual Memory */
   run_virt(frames3, pages, num_pages, F, "OPT");
   cout << endl;
-  run_virt(frames3, pages, num_pages, F, "LRU");
+  run_virt(frames2, pages, num_pages, F, "LRU");
   cout << endl;
-  run_virt(frames3, pages, num_pages, F, "LFU");
+  run_virt(frames, pages, num_pages, F, "LFU");
+  
   return 0;
 }
 
