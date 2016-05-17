@@ -100,13 +100,13 @@ int Memory::check (Proc p, int time, string& algo) {
         partitions.erase(partitions.begin()+i+1);
       }
     }
-    for (i=0; i<partitions.size(); i++) {
+    for (i=0; i<(signed)partitions.size(); i++) {
       if (partitions[i].second - partitions[i].first < p.memory)
         continue;
       return i;
     }
   }
-  else if (algo == "Next") {    //TODO: fix this
+  else if (algo == "Next") {
     unsigned int begin_i = 0;
     for (i=0; i<partitions.size(); i++) {
       if (end_last_frame < partitions[i].first)
